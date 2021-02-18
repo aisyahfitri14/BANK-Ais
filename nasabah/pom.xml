@@ -94,6 +94,39 @@
 					</excludes>
 				</configuration>
 			</plugin>
+                        <plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+                                <configuration>
+                                    <verbose>true</verbose>
+                                    <registry>${docker.registry}</registry>
+                                    <dockerFileDir>src/main/docker</dockerFileDir>
+                                    <images>
+                                        <image>
+                                            <name>${docker.registry}/dockboot:${project.version}</name>
+                                            <build>
+                                                <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+                                                <tags>
+                                                    <tag>${project.version}</tag>
+                                                    <tag>latest</tag>
+                                                </tags>
+                                                <assembly>
+                                                    <inline>
+                                                        <dependencySets>
+                                                            <dependencySet>
+                                                                <includes>
+                                                                    <include>${project.groupId}:${project.artifactId}</include>
+                                                                </includes>
+                                                                <outputFileNameMapping>app.jar</outputFileNameMapping>
+                                                            </dependencySet>
+                                                        </dependencySets>
+                                                    </inline>
+                                                </assembly>
+                                            </build>
+                                        </image>
+                                    </images>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
