@@ -26,8 +26,6 @@ import org.springframework.data.annotation.Id;
 @Data
 public class PasswordResetToken {
  
-    private static final int EXPIRATION = 60 * 24;
- 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @javax.persistence.Id
@@ -39,8 +37,6 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id", referencedColumnName = "email")
     private User user;
  
-    private Date expiryDate;
-
     public PasswordResetToken() {
     }
     
@@ -49,12 +45,5 @@ public class PasswordResetToken {
         this.user = user;
     }
     
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
 }

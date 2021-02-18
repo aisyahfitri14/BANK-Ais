@@ -109,20 +109,24 @@ public class UserController {
     }
     
     @PostMapping("save-password")
-    public ResponseMessage<User> updatePassword(@RequestBody PasswordDto passwordDto){
+    public ResponseMessage<User> updatePassword(@RequestBody PasswordDto passwordDto, Authentication auth){
         String result = securityUserService.validatePasswordResetToken(passwordDto.getToken());
-        System.out.println(result);
-        
+                
         if (result == "validToken") {
             PasswordResetToken data = securityUserService.getData(passwordDto.getToken());
-            User user = service.getDataByEmail(data.getUser().getEmail());
-            
-            if (passwordDto.getNewPassword().equals(passwordDto.getConfirm())) {
-                service.changeUserPassword(user, passwordDto.getNewPassword());
-                return new ResponseMessage(null, "Success"); 
+                        
+            if (auth.getName().equals(data.getUser().getEmail())) {
+                User user = service.getDataByEmail(data.getUser().getEmail());
+                if (passwordDto.getNewPassword().equals(passwordDto.getConfirm())) {
+                    service.changeUserPassword(user, passwordDto.getNewPassword());
+                    return new ResponseMessage(null, "Success"); 
+                }
+                else {
+                    return new ResponseMessage(null, "Password do not match"); 
+                }
             }
             else {
-                return new ResponseMessage(null, "Password do not match"); 
+                return new ResponseMessage(null, "Wrong token");
             }
         }
         else {
