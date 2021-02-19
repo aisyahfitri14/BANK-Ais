@@ -55,13 +55,14 @@ public class UserService {
     }
     
     public void createPasswordResetTokenForUser(User user, String token) {
-        PasswordResetToken myToken = new PasswordResetToken(token, user);
+        PasswordResetToken myToken = new PasswordResetToken(token, false, user);
         passwordTokenRepository.save(myToken);
     }
     
-    public void changeUserPassword(User user, String password) {
+    public void changeUserPassword(User user, String password, String token) {
         user.setPassword(passwordEncoder.encode(password));
         repo.save(user);
+        passwordTokenRepository.updateToken(token);
     }
     
     public String userPassword(String email){

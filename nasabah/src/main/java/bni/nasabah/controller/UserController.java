@@ -65,10 +65,12 @@ public class UserController {
     }
     
     @PostMapping
-    public ResponseMessage<User> createUser(@RequestBody User user){
+    public newUser createUser(@RequestBody User user){
         try{
             user.setPassword(random.randomString());
             User data = service.inserUser(user);
+            User getUser = service.getDataByEmail(data.getEmail());
+            newUser passId = new newUser(getUser.getId(), user.getPassword());
             
             Mailer mail = new Mailer();
             mail.setTo(user.getEmail());
@@ -76,16 +78,16 @@ public class UserController {
             
             Context context = new Context();
             context.setVariable("title","Information New User Account");
-            context.setVariable("id", user.getId());
+            context.setVariable("id", getUser.getId());
             context.setVariable("account",user.getNamaLengkap());
             context.setVariable("password",user.getPassword());
             
             notification.sendEmail(mail,null,context,"email/NotifAccount");
-
-            return new ResponseMessage(null, "success");
+            
+            return passId;
         }
         catch(Exception ex){
-            return new ResponseMessage(ex, "error");
+            return null;
         }
     }
     
@@ -115,18 +117,23 @@ public class UserController {
         if (result == "validToken") {
             PasswordResetToken data = securityUserService.getData(passwordDto.getToken());
                         
-            if (auth.getName().equals(data.getUser().getEmail())) {
-                User user = service.getDataByEmail(data.getUser().getEmail());
-                if (passwordDto.getNewPassword().equals(passwordDto.getConfirm())) {
-                    service.changeUserPassword(user, passwordDto.getNewPassword());
-                    return new ResponseMessage(null, "Success"); 
-                }
-                else {
-                    return new ResponseMessage(null, "Password do not match"); 
-                }
+            if (data.isIsExpired()) {
+                return new ResponseMessage(null, "Token is expired");
             }
             else {
-                return new ResponseMessage(null, "Wrong token");
+                if (auth.getName().equals(data.getUser().getEmail())) {
+                    User user = service.getDataByEmail(data.getUser().getEmail());
+                    if (passwordDto.getNewPassword().equals(passwordDto.getConfirm())) {
+                        service.changeUserPassword(user, passwordDto.getNewPassword(), passwordDto.getToken());
+                        return new ResponseMessage(null, "Success"); 
+                    }
+                    else {
+                        return new ResponseMessage(null, "Password do not match"); 
+                    }
+                }
+                else {
+                    return new ResponseMessage(null, "Wrong token");
+                }
             }
         }
         else {

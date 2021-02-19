@@ -6,6 +6,8 @@
 package bni.nasabah.model;
 
 import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -32,6 +35,11 @@ public class PasswordResetToken {
     private Integer id;
  
     private String token;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "is_expired", nullable = false)
+    private boolean isExpired;
  
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "email")
@@ -39,11 +47,19 @@ public class PasswordResetToken {
  
     public PasswordResetToken() {
     }
-    
-    public PasswordResetToken(String token, User user) {
+
+    public PasswordResetToken(String token, boolean isExpired, User user) {
         this.token = token;
+        this.isExpired = isExpired;
         this.user = user;
     }
     
+    public boolean isIsExpired() {
+        return isExpired;
+    }
 
+    public void setIsExpired(boolean isExpired) {
+        this.isExpired = isExpired;
+    }
+    
 }
