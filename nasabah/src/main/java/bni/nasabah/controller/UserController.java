@@ -72,17 +72,17 @@ public class UserController {
             User getUser = service.getDataByEmail(data.getEmail());
             newUser passId = new newUser(getUser.getId(), user.getPassword());
             
-            Mailer mail = new Mailer();
-            mail.setTo(user.getEmail());
-            mail.setSubject("New Account");
-            
-            Context context = new Context();
-            context.setVariable("title","Information New User Account");
-            context.setVariable("id", getUser.getId());
-            context.setVariable("account",user.getNamaLengkap());
-            context.setVariable("password",user.getPassword());
-            
-            notification.sendEmail(mail,null,context,"email/NotifAccount");
+//            Mailer mail = new Mailer();
+//            mail.setTo(user.getEmail());
+//            mail.setSubject("New Account");
+//            
+//            Context context = new Context();
+//            context.setVariable("title","Information New User Account");
+//            context.setVariable("id", getUser.getId());
+//            context.setVariable("account",user.getNamaLengkap());
+//            context.setVariable("password",user.getPassword());
+//            
+//            notification.sendEmail(mail,null,context,"email/NotifAccount");
             
             return passId;
         }
@@ -96,16 +96,17 @@ public class UserController {
         User user = service.getDataByEmail(auth.getName());
         String token = UUID.randomUUID().toString();
         service.createPasswordResetTokenForUser(user, token);
+        System.out.println(token);
         
-        Mailer mail = new Mailer();
-        mail.setTo(user.getEmail());
-        mail.setSubject("Reset Account Password");
-        
-        Context context = new Context();
-        context.setVariable("title","Reset password");
-        context.setVariable("token", token);
-         
-        notification.sendEmail(mail,null,context,"email/ResetAccount");
+//        Mailer mail = new Mailer();
+//        mail.setTo(user.getEmail());
+//        mail.setSubject("Reset Account Password");
+//        
+//        Context context = new Context();
+//        context.setVariable("title","Reset password");
+//        context.setVariable("token", token);
+//         
+//        notification.sendEmail(mail,null,context,"email/ResetAccount");
         
         return token;
     }

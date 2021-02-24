@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+	basic-auth:
+		build: ./auth/
+		ports:
+			- 8087:8087
+		environment:
+			REGISTRY_AUTH: htpasswd
+			REGISTRY_AUTH_HTPASSWD_REALM: basic-realm
+			REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
